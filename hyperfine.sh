@@ -1,46 +1,47 @@
 #!/usr/bin/env bash
 
-declare -i TIMES=500
-declare -i WIDTH=$(tput cols)
+declare -i TIMES=4000
 declare -r CMD=$*
 declare -A OUTP
-
-# adjust for tab beginning
-(( WIDTH -= 8 ))
-
-function hf_parse() {
-	awk '{ printf $10 $11 }'
-}
-
-function repeatChar() {
-    local input="$1"
-    local count="$2"
-    printf -v myString "%s" "%${count}s"
-    printf '%s\n' "${myString// /$input}"
-}
 
 declare -i longest=0
 declare -i shortest=$TIMES
 declare -i count=0
 
+declare -a BLOCKS=(' ' '▏' '▎' '▍' '▌' '▋' '▊' '▉' '█')
+
+# for DD
+function hf_parse() {
+	awk '{ printf $10 $11 }'
+}
+
+function repeat() {
+    local -r char="$1"
+    local -r count="$2"
+    printf %${count}s |tr " " "${char}"
+}
+
+
 for i in $(seq 1 $TIMES); do
 	KEY=$($CMD |& hf_parse)
 	(( OUTP[$KEY]+=1 ))
-	VAL=${OUTP[$KEY]}
+
+	VAL=${OUTP[${KEY}]}
 
 	(( ${VAL} > $longest )) && longest=${VAL}
 	(( ${VAL} < $shortest )) && shortest=${VAL}
 
 	(( count += 1 ))
-
-	(( $longest >= $WIDTH )) && break
 done
 
 for k in "${!OUTP[@]}"; do
+	declare -i REP=0
+	declare -i VAL=${OUTP[$k]}
+
 	echo -ne "$k\t"
-	for v in $(seq 1 ${OUTP[$k]}); do
-		echo -n '#'
-	done
+
+	(( REP = ${VAL} / 8 )) && repeat ${BLOCKS[8]} ${REP}
+	(( REP = ${VAL} % 8 )) && echo -n ${BLOCKS[${REP}]}
 	echo
 done | sort -h
 
