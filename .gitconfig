@@ -1,0 +1,18 @@
+[user]
+	email = pmccormick@digitalocean.com
+	name = Patrick McCormick
+[alias]
+	undo = reset HEAD^
+	pro = pull --rebase origin
+	track = checkout -b
+	commit = commit -s
+	sw = switch -
+	st = status -sb
+	ll = log --oneline
+	last = log -1 HEAD --stat
+	rv = remote -v
+	co = checkout
+	lg = log --graph --full-history --all --color      --pretty=format:"%x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s"
+	unstage = reset HEAD --
+[core]
+	editor = vim
