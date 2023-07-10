@@ -1,13 +1,20 @@
 require('plugins')
 
-local lsp = require('lsp-zero').preset({
-  name = 'recommended',
-  set_lsp_keymaps = true,
-  suggest_lsp_servers = true,
-  sign_icons = false
-})
+local lsp = require('lsp-zero').preset({})
+
+lsp.on_attach(function(client, bufnr)
+  lsp.default_keymaps({buffer = bufnr, preserve_mappings = false})
+end)
 
 lsp.setup()
+
+local cmp = require('cmp')
+
+cmp.setup({
+  mapping = {
+    ['<CR>'] = cmp.mapping.confirm({select = true}),
+  }
+})
 
 -- https://github.com/nvim-lua/kickstart.nvim/blob/4916072854d01d0503821b7f3061daeb381f0441/init.lua#L154
 -- Set lualine as statusline
@@ -26,7 +33,7 @@ require('lualine').setup {
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust',  'help', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'vim' },
 
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
